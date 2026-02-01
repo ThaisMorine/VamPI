@@ -10,14 +10,11 @@ jobs:
   sast:
     name: SAST - SonarQube Scan
     runs-on: ubuntu-latest
-
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     steps:
       - name: Checkout do código
         uses: actions/checkout@v3
 
       - name: SonarQube Scan
         uses: SonarSource/sonarcloud-github-action@v1
-        with:
-          organization: 'thaismorine'
-          projectKey: 'thaismorine'
-          token: ${{ secrets.SONAR_TOKEN }}
