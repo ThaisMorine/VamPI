@@ -1,0 +1,34 @@
+name: Security Scan Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  sast:
+    name: SAST - SonarQube Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Java (SonarQube requirement)
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+
+      - name: Install Sonar Scanner
+        run: |
+          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
+          unzip sonar-scanner.zip -d $HOME/sonar-scanner
+          echo "$HOME/sonar-scanner/sonar-scanner-4.8.0.2856-linux/bin" >> $GITHUB_PATH
+
+      - name: Run SonarQube Scan
+        run: sonar-scanner \
+          -Dsonar.projectKey=my_project \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
